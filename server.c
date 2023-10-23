@@ -26,7 +26,7 @@ int main(){
 	signal(SIGINT, fin_serveur); /* Faut voir le cas d'un signal quelconque */
 	
 	server_running = 1;
-	//while(server_running){
+	while(server_running){
 		printf("Avant lecture question\n");
 		/* lecture d'une question */
 		Question question;
@@ -47,7 +47,7 @@ int main(){
 		
 		/* envoi du signal SIGUSR1 au client concerné*/
 	    kill(question.client_num, SIGUSR1);
-	//}
+	}
 	
 	/* Fermeture des tubes nommés et autres ressources */
     close(fifo1_fd);

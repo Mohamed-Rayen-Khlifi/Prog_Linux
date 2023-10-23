@@ -26,7 +26,11 @@ int main(){
 	}
 	question.n = num;
 
+	printf("Je vais ecrire ce message\n");
 	write(fifo1_fd, &question, sizeof(Question));
+	printf("Message écrit\n");
+	printf("Mond pid est: %d et le message envoyé est: %d\n", question.client_num, question.n);
+	
 
 	/* Envoi du signal SIGUSR1 au serveur; Envoi d'une question */
 
