@@ -4,6 +4,9 @@
 int main(){
 	/* Déclarations */
 	int fifo1_fd, fifo2_fd;
+
+	/*initialisation du générateur de nombres aléatoires*/
+	srand (getpid()) ;
 	
 	/* Ouverture des tubes nommés */
     fifo1_fd = open(FIFO1, O_WRONLY);
@@ -21,23 +24,21 @@ int main(){
 	Question question;
 	question.client_num = getpid();
 	question.n = (rand() % NMAX) + 1 ;
-	printf("J'ai demandé %d nombres aléatoires\n", question.n);
+	printf("Demande de %d nombres aléatoires\n", question.n);
 	
 	write(fifo1_fd, &question, sizeof(Question));
-	
-	/* Envoi du signal SIGUSR1 au serveur; Envoi d'une question */
-	kill(PID_Server, SIGUSR1);
 
 	/* Attente de la réponse */
 	Response response;
 	read(fifo2_fd, &response, sizeof(Response));
-	
+
 	/* Envoi du signal SIGUSR1 au serveur; Reception de réponse */
-	
+	kill(PID_Server, SIGUSR1);
+
 	/* Lecture de la réponse */
 	printf("Client %d:\nResponse = ", response.client_num);
 	for (int i = 0; i < response.count; i++) {
-        printf("%d\t", response.numbers[i]);
+        printf("%d || ", response.numbers[i]);
     }
 	printf("\n");
 	

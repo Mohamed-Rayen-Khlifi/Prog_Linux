@@ -1,6 +1,25 @@
 #include "serv_cli_fifo.h"
 #include "Handlers_Serv.h"
 
+Question clientList[MAX_CLIENTS];
+int size; 
+
+void question_handling(Question question){
+    // Append elements to the list
+    size++;
+    //clientList = (int*)realloc(clientList, size * sizeof(Question));
+    clientList[size - 1].client_num = question.client_num ;
+    clientList[size - 1].n = question.n;
+}
+
+void response_handling(){
+    clientList[size - 1].client_num = 0;
+    clientList[size - 1].n = 0;
+	//  free(clientList[size -1 ]);
+	//size--;
+}
+
+
 int main(){
 	/*Déclarations */
 	int fifo1_fd, fifo2_fd;
@@ -18,26 +37,26 @@ int main(){
 
 	/* Envoi du PID serveur au Client */
 	pid_t pid = getpid();
+
     write(fifo2_fd, &pid, sizeof(pid));
 
-
 	/* Installation des Handlers */
-	signal(SIGUSR1, hand_reveil);
+	signal(SIGUSR1, hand_reveil); // sigaction car signal qcqe
 	signal(SIGINT, fin_serveur); /* Faut voir le cas d'un signal quelconque */
 	
 	server_running = 1;
-	int affichage = 1;
+	//int affichage = 1;
 	while(server_running){
 		/* lecture d'une question */
 		Question question;
-		if (read(fifo1_fd, &question, sizeof(Question))==-1){
-			printf("Erreur de lecture");
-		}
+		read(fifo1_fd, &question, sizeof(Question));		
+		question_handling(question);
+		sleep(4);
+		// if (affichage) {
+		// printf("Traitement de la demande du client: %d\n", question.client_num);
+		// }
+		// affichage = 0;
 
-		if (affichage) {
-		printf("Je vais traité la demande du client: %d\n", question.client_num);
-		}
-		affichage = 0;
 		/* construction de la réponse*/
         Response response;
 		response.count = question.n;
@@ -48,7 +67,8 @@ int main(){
 		
 		/* envoi de la réponse*/
         write(fifo2_fd, &response, sizeof(Response));
-		
+		//response_handling();
+	
 		/* envoi du signal SIGUSR1 au client concerné*/
 	    kill(question.client_num, SIGUSR1);
 	}
