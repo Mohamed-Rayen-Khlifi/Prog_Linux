@@ -11,8 +11,6 @@ void hand_reveil(int sig) {
     */  
 
     /* Cas1: Ajout d'un client à la liste après la réception de sa question */
-    pause();
-    printf("Question reçu");
     // for (int i = 0; i < MAX_CLIENTS; i++) {
     //     if (clientList[i] == 0 || clientList[i] == question.client_num) {
     //         clientList[i] = question.client_num;

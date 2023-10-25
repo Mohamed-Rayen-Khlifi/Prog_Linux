@@ -5,7 +5,7 @@
 
 void hand_reveil(int sig) {
 	/* Réception d'une réponse du serveur */
-    printf("J'ai bien reçu la réponse du serveur\n");
+    printf("Réponse reçue\n");
     //kill(getppid(), SIGUSR1);
 
 

@@ -20,28 +20,20 @@ int main(){
 	/* Construction et envoi d'une question */
 	Question question;
 	question.client_num = getpid();
-	int num;
-	while(num > NMAX || num <1){
-		scanf("%d", &num);
-	}
-	question.n = num;
-
-	printf("Je vais ecrire ce message\n");
-	write(fifo1_fd, &question, sizeof(Question));
-	printf("Message écrit\n");
-	printf("Mond pid est: %d et le message envoyé est: %d\n", question.client_num, question.n);
+	question.n = (rand() % NMAX) + 1 ;
+	printf("J'ai demandé %d nombres aléatoires\n", question.n);
 	
-
+	write(fifo1_fd, &question, sizeof(Question));
+	
 	/* Envoi du signal SIGUSR1 au serveur; Envoi d'une question */
-
 	kill(PID_Server, SIGUSR1);
 
 	/* Attente de la réponse */
 	Response response;
 	read(fifo2_fd, &response, sizeof(Response));
-
+	
 	/* Envoi du signal SIGUSR1 au serveur; Reception de réponse */
-
+	
 	/* Lecture de la réponse */
 	printf("Client %d:\nResponse = ", response.client_num);
 	for (int i = 0; i < response.count; i++) {

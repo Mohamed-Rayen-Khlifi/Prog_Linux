@@ -12,7 +12,7 @@
 
 #define FIFO1 "fifo1"
 #define FIFO2 "fifo2"
-#define NMAX 100
+#define NMAX 10
 #define MAX_CLIENTS 10
 
 int server_running;
@@ -23,7 +23,7 @@ typedef struct  {
 } Question;
 typedef struct  {
 	int numbers[NMAX];
-	int count;
+	int count; /* A enlever car on peut acceder n*/
 	int client_num;
 } Response;
 #endif

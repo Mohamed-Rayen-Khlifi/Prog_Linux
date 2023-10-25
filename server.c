@@ -26,13 +26,18 @@ int main(){
 	signal(SIGINT, fin_serveur); /* Faut voir le cas d'un signal quelconque */
 	
 	server_running = 1;
+	int affichage = 1;
 	while(server_running){
-		printf("Avant lecture question\n");
 		/* lecture d'une question */
 		Question question;
-		read(fifo1_fd, &question, sizeof(Question));
+		if (read(fifo1_fd, &question, sizeof(Question))==-1){
+			printf("Erreur de lecture");
+		}
 
-		printf("Après\n");
+		if (affichage) {
+		printf("Je vais traité la demande du client: %d\n", question.client_num);
+		}
+		affichage = 0;
 		/* construction de la réponse*/
         Response response;
 		response.count = question.n;
@@ -43,7 +48,6 @@ int main(){
 		
 		/* envoi de la réponse*/
         write(fifo2_fd, &response, sizeof(Response));
-		printf("Après envoie réponse");
 		
 		/* envoi du signal SIGUSR1 au client concerné*/
 	    kill(question.client_num, SIGUSR1);
