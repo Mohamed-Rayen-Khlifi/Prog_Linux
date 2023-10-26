@@ -15,7 +15,22 @@ int main(){
 
 	/* Installation des Handlers */
 	signal(SIGUSR1, hand_reveil); // sigaction car signal qcqe
-	signal(SIGINT, fin_serveur); /* Faut voir le cas d'un signal quelconque */
+	// signal(SIGINT, fin_serveur); /* Faut voir le cas d'un signal quelconque */
+
+	/* Define the signals to be grouped */
+    int signals[] = {SIGTSTP, SIGQUIT, SIGINT};
+    int numSignals = sizeof(signals) / sizeof(signals[0]);
+
+    /* Set up the signal action */
+    struct sigaction sa;
+    sa.sa_handler = fin_serveur;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0; 
+
+    /* Group the signals and set the same signal handler for all of them */
+    for (int i = 0; i < numSignals; i++) {
+        sigaction(signals[i], &sa, NULL);
+    }
 	
 	while(server_running){
 
