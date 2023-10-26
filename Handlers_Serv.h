@@ -6,13 +6,8 @@
 void hand_reveil(int sig) {
     /*  Confirmation de la réception de réponse par le client */  
     printf("Réponse delivrée\n");
-
-
-
     }
-
-
-
+ 
 void fin_serveur(int sig) {
     printf("J'ai reçu le signal: %d\n", sig);
     server_running = 0;
