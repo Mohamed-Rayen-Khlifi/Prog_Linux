@@ -13,23 +13,23 @@ int main(){
     mkfifo(FIFO2, 0666);
 
 	/* Installation des Handlers */
-	signal(SIGUSR1, hand_reveil); // sigaction car signal qcqe
+	signal(SIGUSR1, hand_reveil);
 
-	/* Define the signals to be grouped */
+	/* Déclaration d'un group de signaux */
     int signals[] = {SIGTSTP, SIGQUIT, SIGINT, SIGTERM, SIGHUP};
     int numSignals = sizeof(signals) / sizeof(signals[0]);
 
-    /* Set up the signal action */
+    /* Déclaration du sigaction */
     struct sigaction sa;
     sa.sa_handler = fin_serveur;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0; 
 
-    /* Group the signals and set the same signal handler for all of them */
     for (int i = 0; i < numSignals; i++) {
         sigaction(signals[i], &sa, NULL);
     }
 	
+	/* Boucle de traitement des questions */
 	while(server_running){
 
 		/* Ouverture des tubes nommés */
@@ -42,11 +42,13 @@ int main(){
 		
 		/* Lecture d'une question */
 		Question question;
-		read(fifo1_fd, &question, sizeof(Question));
+		if (read(fifo1_fd, &question, sizeof(Question)) == -1){
+			continue;
+		};
 
 		printf("Traitement de la demande du client: %d\n", question.client_num);
 
-		/* Construction de la réponse*/
+		/* Construction de la réponse */
 		Response response;
 		response.count = question.n;
 		response.client_num = question.client_num;
@@ -54,19 +56,17 @@ int main(){
 			response.numbers[i] = (rand() % NMAX) + 1 ;
 		}
 		
-		/* Envoi de la réponse*/
+		/* Envoi de la réponse */
 		write(fifo2_fd, &response, sizeof(Response));
 	
-		/* Envoi du signal SIGUSR1 au client concerné*/
+		/* Envoi du signal SIGUSR1 au client concerné */
 		kill(question.client_num, SIGUSR1);
 		
-		/* Fermeture des tubes nommés*/
+		/* Fermeture des descripteurs */
 		close(fifo1_fd);
 		close(fifo2_fd);	
 		sleep(1);
 		}
-		// unlink(FIFO1);
-		// unlink(FIFO2);
 	
 	return 0;
 }
