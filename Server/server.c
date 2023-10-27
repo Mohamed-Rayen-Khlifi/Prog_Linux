@@ -1,4 +1,3 @@
-#include "serv_cli_fifo.h"
 #include "Handlers_Serv.h"
 
 int main(){
@@ -15,10 +14,9 @@ int main(){
 
 	/* Installation des Handlers */
 	signal(SIGUSR1, hand_reveil); // sigaction car signal qcqe
-	// signal(SIGINT, fin_serveur); /* Faut voir le cas d'un signal quelconque */
 
 	/* Define the signals to be grouped */
-    int signals[] = {SIGTSTP, SIGQUIT, SIGINT};
+    int signals[] = {SIGTSTP, SIGQUIT, SIGINT, SIGTERM, SIGHUP};
     int numSignals = sizeof(signals) / sizeof(signals[0]);
 
     /* Set up the signal action */
@@ -67,8 +65,8 @@ int main(){
 		close(fifo2_fd);	
 		sleep(1);
 		}
-		unlink(FIFO1);
-		unlink(FIFO2);
+		// unlink(FIFO1);
+		// unlink(FIFO2);
 	
 	return 0;
 }
